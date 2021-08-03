@@ -7,8 +7,9 @@ from singer_sdk.testing import get_standard_tap_tests
 from tap_gong.tap import TapGong
 
 SAMPLE_CONFIG = {
-    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d")
-    # TODO: Initialize minimal tap config
+    "start_date": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d"),
+    "access_key": "foo",
+    "access_key_secret": "bar"
 }
 
 
@@ -21,6 +22,3 @@ def test_standard_tap_tests():
     )
     for test in tests:
         test()
-
-
-# TODO: Create additional tests as appropriate for your tap.
