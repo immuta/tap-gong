@@ -38,10 +38,11 @@ class CallTranscriptsStream(GongStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
+        start_time = self.get_starting_timestamp(context).strftime('%Y-%m-%dT%H:%M:%SZ')
         request_body = {
             "filter": {
                 "callIds": [context["call_id"]],
-                "fromDateTime": self.config("start_date"),
+                "fromDateTime": start_time,
                 "toDateTime": None,
                 "cursor": next_page_token,
             }

@@ -7,16 +7,14 @@ from singer_sdk import typing as th  # JSON schema typing helpers
 
 from tap_gong.streams import (
     CallsStream,
-    CallDetailsStream,
     CallTranscriptsStream,
     UsersStream,
 )
 
 STREAM_TYPES = [
-    # CallsStream,
-    CallDetailsStream,
-    # CallTranscriptsStream,
-    # UsersStream
+    CallsStream,
+    CallTranscriptsStream,
+    UsersStream
 ]
 
 
