@@ -1,7 +1,4 @@
-import time
-from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
-
 from singer_sdk import typing as th  # JSON Schema typing helpers
 
 from tap_gong.client import GongStream

@@ -1,6 +1,5 @@
 """REST client handling, including GongStream base class."""
 
-import requests
 from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
 
