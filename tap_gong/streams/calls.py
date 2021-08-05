@@ -1,20 +1,17 @@
-"""Stream type classes for tap-gong."""
-
-import time
-from pathlib import Path
 from typing import Any, Dict, Optional, Union, List, Iterable
-
-from singer_sdk import typing as th  # JSON Schema typing helpers
+from singer_sdk import typing as th
 
 from tap_gong.client import GongStream
 
+
 class CallsStream(GongStream):
-    """Define custom stream."""
+    "Stream for all call data"
     name = "calls"
     path = "/v2/calls/extensive"
     primary_keys = ["id"]
     replication_key = "started"
     records_jsonpath = "$.calls[*]"
+    next_page_token_jsonpath = "$.records.cursor"
     rest_method = "POST"
 
     schema = th.PropertiesList(
@@ -122,12 +119,13 @@ class CallsStream(GongStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
-        start_time = self.get_starting_timestamp(context).strftime('%Y-%m-%dT%H:%M:%SZ')
+        start_time = self.get_starting_timestamp(context)
+        start_time_fmt = start_time.strftime('%Y-%m-%dT%H:%M:%SZ') if start_time else None
         request_body = {
+            "cursor": next_page_token,
             "filter": {
-                "fromDateTime": start_time,
-                "toDateTime": None,
-                "cursor": next_page_token
+                "fromDateTime": start_time_fmt,
+                "toDateTime": None
             },
             "contentSelector": {
                 "context": "Extended",

@@ -25,7 +25,7 @@ class TapGong(Tap):
     config_jsonschema = th.PropertiesList(
         th.Property("access_key", th.StringType, required=True),
         th.Property("access_key_secret", th.StringType, required=True),
-        th.Property("start_date", th.DateTimeType),
+        th.Property("start_date", th.DateTimeType, default=None),
     ).to_dict()
 
     def discover_streams(self) -> List[Stream]:
