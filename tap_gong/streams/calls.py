@@ -17,97 +17,183 @@ class CallsStream(GongStream):
     schema = th.PropertiesList(
         th.Property("id", th.StringType),
         th.Property("started", th.DateTimeType),
-        th.Property("metaData", th.ObjectType(
-            th.Property("id", th.StringType),
-            th.Property("url", th.StringType),
-            th.Property("title", th.StringType),
-            th.Property("scheduled", th.DateTimeType),
-            th.Property("started", th.DateTimeType),
-            th.Property("duration", th.IntegerType),
-            th.Property("primaryUserId", th.StringType),
-            th.Property("direction", th.StringType),
-            th.Property("system", th.StringType),
-            th.Property("scope", th.StringType),
-            th.Property("media", th.StringType),
-            th.Property("language", th.StringType),
-            th.Property("workspaceId", th.StringType),
-            th.Property("sdrDisposition", th.StringType),
-            th.Property("clientUniqueId", th.StringType),
-            th.Property("customData", th.StringType),
-        )),
-        th.Property("context", th.ArrayType(th.StringType)),
-        th.Property("parties", th.ArrayType(
+        th.Property(
+            "metaData",
             th.ObjectType(
                 th.Property("id", th.StringType),
-                th.Property("emailAddress", th.StringType),
-                th.Property("name", th.StringType),
+                th.Property("url", th.StringType),
                 th.Property("title", th.StringType),
-                th.Property("userId", th.StringType),
-                th.Property("speakerId", th.StringType),
-                th.Property("context", th.ArrayType(
-                    th.ObjectType(
-                        th.Property("system", th.StringType),
-                        th.Property("objects", th.ArrayType(
+                th.Property("scheduled", th.DateTimeType),
+                th.Property("started", th.DateTimeType),
+                th.Property("duration", th.IntegerType),
+                th.Property("primaryUserId", th.StringType),
+                th.Property("direction", th.StringType),
+                th.Property("system", th.StringType),
+                th.Property("scope", th.StringType),
+                th.Property("media", th.StringType),
+                th.Property("language", th.StringType),
+                th.Property("workspaceId", th.StringType),
+                th.Property("sdrDisposition", th.StringType),
+                th.Property("clientUniqueId", th.StringType),
+                th.Property("customData", th.StringType),
+                th.Property("purpose", th.StringType),
+                th.Property("meetingUrl", th.StringType),
+                th.Property("isPrivate", th.BooleanType),
+            ),
+        ),
+        th.Property(
+            "context",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property("system", th.StringType),
+                    th.Property(
+                        "objects",
+                        th.ArrayType(
                             th.ObjectType(
                                 th.Property("objectType", th.StringType),
                                 th.Property("objectId", th.StringType),
-                                th.Property("fields", th.ArrayType(
-                                    th.ObjectType(
-                                        th.Property("name", th.StringType),
-                                        th.Property("value", th.StringType),
-                                    )),
+                                th.Property("timing", th.StringType),
+                                th.Property(
+                                    "fields",
+                                    th.ArrayType(
+                                        th.ObjectType(
+                                            th.Property("name", th.StringType),
+                                            th.Property("value", th.StringType),
+                                        )
+                                    ),
                                 ),
-                            )),
+                            )
                         ),
-                    )),
-                ),
-                th.Property("affiliation", th.StringType),
-                th.Property("methods", th.ArrayType(th.StringType)),
-            )),
+                    ),
+                )
+            ),
         ),
-        th.Property("content", th.ObjectType(
-            th.Property("trackers", th.ArrayType(
-                th.ObjectType(
-                    th.Property("name", th.StringType),
-                    th.Property("count", th.IntegerType),
-                )),
-            ),
-            th.Property("topics", th.ArrayType(
-                th.ObjectType(
-                    th.Property("name", th.StringType),
-                    th.Property("duration", th.IntegerType),
-                )),
-            ),
-            th.Property("pointsOfInterest", th.ObjectType(
-                th.Property("actionItems", th.ArrayType(th.StringType)),
-            )),
-        )),
-        th.Property("interaction", th.ObjectType(
-            th.Property("speakers", th.ArrayType(
+        th.Property(
+            "parties",
+            th.ArrayType(
                 th.ObjectType(
                     th.Property("id", th.StringType),
+                    th.Property("emailAddress", th.StringType),
+                    th.Property("name", th.StringType),
+                    th.Property("title", th.StringType),
                     th.Property("userId", th.StringType),
-                    th.Property("talkTime", th.NumberType),
-                )),
+                    th.Property("speakerId", th.StringType),
+                    th.Property(
+                        "context",
+                        th.ArrayType(
+                            th.ObjectType(
+                                th.Property("system", th.StringType),
+                                th.Property(
+                                    "objects",
+                                    th.ArrayType(
+                                        th.ObjectType(
+                                            th.Property("objectType", th.StringType),
+                                            th.Property("objectId", th.StringType),
+                                            th.Property(
+                                                "fields",
+                                                th.ArrayType(
+                                                    th.ObjectType(
+                                                        th.Property(
+                                                            "name", th.StringType
+                                                        ),
+                                                        th.Property(
+                                                            "value", th.StringType
+                                                        ),
+                                                    )
+                                                ),
+                                            ),
+                                        )
+                                    ),
+                                ),
+                            )
+                        ),
+                    ),
+                    th.Property("affiliation", th.StringType),
+                    th.Property("phoneNumber", th.StringType),
+                    th.Property("methods", th.ArrayType(th.StringType)),
+                )
             ),
-            th.Property("interactionStats", th.ArrayType(
-                th.ObjectType(
-                    th.Property("name", th.StringType),
-                    th.Property("value", th.NumberType),
-                )),
+        ),
+        th.Property(
+            "content",
+            th.ObjectType(
+                th.Property(
+                    "trackers",
+                    th.ArrayType(
+                        th.ObjectType(
+                            th.Property("name", th.StringType),
+                            th.Property("count", th.IntegerType),
+                        )
+                    ),
+                ),
+                th.Property(
+                    "topics",
+                    th.ArrayType(
+                        th.ObjectType(
+                            th.Property("name", th.StringType),
+                            th.Property("duration", th.IntegerType),
+                        )
+                    ),
+                ),
+                th.Property(
+                    "pointsOfInterest",
+                    th.ObjectType(
+                        th.Property(
+                            "actionItems",
+                            th.ArrayType(
+                                th.ObjectType(
+                                    th.Property("snippetStartTime", th.NumberType),
+                                    th.Property("snippetEndTime", th.NumberType),
+                                    th.Property("speakerID", th.StringType),
+                                    th.Property("snippet", th.StringType),
+                                )
+                            ),
+                        ),
+                    ),
+                ),
             ),
-            th.Property("video", th.ArrayType(
-                th.ObjectType(
-                    th.Property("name", th.StringType),
-                    th.Property("duration", th.NumberType),
-                )),
+        ),
+        th.Property(
+            "interaction",
+            th.ObjectType(
+                th.Property(
+                    "speakers",
+                    th.ArrayType(
+                        th.ObjectType(
+                            th.Property("id", th.StringType),
+                            th.Property("userId", th.StringType),
+                            th.Property("talkTime", th.NumberType),
+                        )
+                    ),
+                ),
+                th.Property(
+                    "interactionStats",
+                    th.ArrayType(
+                        th.ObjectType(
+                            th.Property("name", th.StringType),
+                            th.Property("value", th.NumberType),
+                        )
+                    ),
+                ),
+                th.Property(
+                    "video",
+                    th.ArrayType(
+                        th.ObjectType(
+                            th.Property("name", th.StringType),
+                            th.Property("duration", th.NumberType),
+                        )
+                    ),
+                ),
+                th.Property(
+                    "questions",
+                    th.ObjectType(
+                        th.Property("companyCount", th.IntegerType),
+                        th.Property("nonCompanyCount", th.IntegerType),
+                    ),
+                ),
             ),
-            th.Property("questions", th.ObjectType(
-                th.Property("companyCount", th.IntegerType),
-                th.Property("nonCompanyCount", th.IntegerType),
-            )),
-        )),
-        th.Property("collaboration", th.ObjectType()),
+        ),
+        # th.Property("collaboration", th.ObjectType()),
     ).to_dict()
 
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
@@ -120,36 +206,33 @@ class CallsStream(GongStream):
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
         start_time = self.get_starting_timestamp(context)
-        start_time_fmt = start_time.strftime('%Y-%m-%dT%H:%M:%SZ') if start_time else None
+        start_time_fmt = (
+            start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
+        )
         request_body = {
             "cursor": next_page_token,
-            "filter": {
-                "fromDateTime": start_time_fmt,
-                "toDateTime": None
-            },
+            "filter": {"fromDateTime": start_time_fmt, "toDateTime": None},
             "contentSelector": {
                 "context": "Extended",
                 "contextTiming": ["Now"],
                 "exposedFields": {
-                    "collaboration": {
-                        "publicComments": True
-                    },
+                    "collaboration": {"publicComments": True},
                     "content": {
                         "pointsOfInterest": True,
                         "structure": True,
                         "topics": True,
-                        "trackers": True
+                        "trackers": True,
                     },
                     "interaction": {
                         "personInteractionStats": True,
                         "questions": True,
                         "speakers": True,
-                        "video": True
+                        "video": True,
                     },
                     "media": False,
-                    "parties": True
-                }
-            }
+                    "parties": True,
+                },
+            },
         }
         return request_body
 
