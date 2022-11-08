@@ -199,7 +199,40 @@ class CallsStream(GongStream):
     def post_process(self, row: dict, context: Optional[dict]) -> dict:
         row["id"] = row["metaData"]["id"]
         row["started"] = row["metaData"]["started"]
+
+
+        # some name / value pairs are returned where value = 'string' but others are value = 5
+        # this breaks our schema - cast them all to string
+        self.process_recursively(row, 'value', lambda n: str(n))
         return row
+
+    def process_recursively(self, search_dict, field, op):
+        """
+        Takes a dict with nested lists and dicts,
+        and searches all dicts for a key of the field
+        provided.
+        """
+        fields_found = []
+
+        for key, value in search_dict.items():
+
+            if key == field:
+                fields_found.append(value)
+                search_dict['value'] = op(value)
+
+            elif isinstance(value, dict):
+                results = self.process_recursively(value, field, op)
+                for result in results:
+                    fields_found.append(result)
+
+            elif isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        more_results = self.process_recursively(item, field, op)
+                        for another_result in more_results:
+                            fields_found.append(another_result)
+
+        return fields_found
 
     def prepare_request_payload(
         self, context: Optional[dict], next_page_token: Optional[Any]
