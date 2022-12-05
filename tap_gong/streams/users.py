@@ -32,9 +32,3 @@ class UsersStream(GongStream):
         th.Property("managerId", th.StringType),
         th.Property("meetingConsentPageUrl", th.StringType),
     ).to_dict()
-
-    def get_child_context(self, record: dict, context: Optional[dict]) -> dict:
-        """Return a context dictionary for child streams."""
-        return {
-            "userId": record["id"],
-        }
