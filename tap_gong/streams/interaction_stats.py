@@ -1,11 +1,9 @@
 from typing import Any, Dict, Optional, Union, List, Iterable
-
+from datetime import datetime
 import requests
 from singer_sdk import typing as th  # JSON Schema typing helpers
 from singer_sdk.exceptions import RetriableAPIError, FatalAPIError
-
 from tap_gong.client import GongStream
-from tap_gong.streams import UsersStream
 
 
 class InteractionStatsStream(GongStream):
@@ -27,8 +25,6 @@ class InteractionStatsStream(GongStream):
     records_jsonpath = "$.peopleInteractionStats[*]"
     rest_method = "POST"
     next_page_token_jsonpath = "$.records.cursor"
-    #parent_stream_type = UsersStream
-    #ignore_parent_replication_key = False
     state_partitioning_keys = []
 
     def prepare_request_payload(self, context: Optional[dict], next_page_token: Optional[Any]) -> Optional[dict]:
@@ -36,11 +32,10 @@ class InteractionStatsStream(GongStream):
         request_body = {
             "cursor": next_page_token,
             "filter": {
-                "fromDate": "2022-07-01",
-                "toDate": "2022-10-01"
+                "fromDate": self.config.get("start_date", datetime.min.strftime("%Y-%m-%d")),
+                "toDate": self.config.get("end_date", datetime.now().strftime("%Y-%m-%d"))
             }
         }
-        #time.sleep(self.request_delay_seconds)
         return request_body
 
     def validate_response(self, response: requests.Response) -> None:
