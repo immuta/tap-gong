@@ -171,7 +171,7 @@ class CallsStream(GongStream):
                     th.ArrayType(
                         th.ObjectType(
                             th.Property("name", th.StringType),
-                            th.Property("value", th.NumberType),
+                            th.Property("value", th.StringType),
                         )
                     ),
                 ),

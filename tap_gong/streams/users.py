@@ -28,7 +28,9 @@ class UsersStream(GongStream):
             th.Property("telephonyCallsImported", th.BooleanType),
             th.Property("emailsImported", th.BooleanType),
             th.Property("preventEmailImport", th.BooleanType),
+            th.Property("nonRecordedMeetingsImported", th.BooleanType),
         )),
         th.Property("managerId", th.StringType),
         th.Property("meetingConsentPageUrl", th.StringType),
     ).to_dict()
+

@@ -130,3 +130,24 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/.idea/.gitignore
+/cat5.json
+/cat6.json
+/cat7.json
+/cat8.json
+/catalog.json
+/catalog2.json
+/catalog3.json
+/catalog4.json
+/config.json
+/gong_data.json
+/gong_schema.json
+/interaction_stats-20221014T135236.jsonl
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/s3_config.json
+/.idea/tap-gong.iml
+/users-20221014T135236.jsonl
+/.idea/vcs.xml
