@@ -11,7 +11,11 @@ The Gong tap accepts the following configuration options:
 
 - `access_key`: An API access key generated in Gong.
 - `access_key_secret`: The secret for the access key.
-- `start_date`: The beginning date from which to start searching calls.
+- `start_date`: The beginning date from which to start searching calls. Default is python min date.
+- `end_date`: The end date for searching calls. Default is current date.
+
+** **NOTE** **
+`start_date` and `end_date` are used in filter clause to make gong API calls and can not be greater than current date. Also `start_date` must be less than `end_date`. 
 
 A full list of supported settings and capabilities for this
 tap is available by running:

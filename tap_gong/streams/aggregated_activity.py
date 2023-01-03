@@ -1,9 +1,7 @@
 from typing import Any, Dict, Optional, Union, List, Iterable
-
-import requests
 from singer_sdk import typing as th  # JSON Schema typing helpers
-from singer_sdk.exceptions import RetriableAPIError, FatalAPIError
 from tap_gong.client import GongStream
+from datetime import datetime
 
 
 class AggregatedActivityStream(GongStream):
@@ -45,8 +43,8 @@ class AggregatedActivityStream(GongStream):
         request_body = {
             "cursor": next_page_token,
             "filter": {
-                "fromDate": "2022-07-01",
-                "toDate": "2022-10-01"
+                "fromDate": self.config.get("start_date", datetime.min.strftime("%Y-%m-%dT%H:%M:%SZ")),
+                "toDate": self.config.get("end_date", datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
             }
         }
         #time.sleep(self.request_delay_seconds)

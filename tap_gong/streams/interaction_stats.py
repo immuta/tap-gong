@@ -32,8 +32,8 @@ class InteractionStatsStream(GongStream):
         request_body = {
             "cursor": next_page_token,
             "filter": {
-                "fromDate": self.config.get("start_date", datetime.min.strftime("%Y-%m-%d")),
-                "toDate": self.config.get("end_date", datetime.now().strftime("%Y-%m-%d"))
+                "fromDate": self.config.get("start_date", datetime.min.strftime("%Y-%m-%dT%H:%M:%SZ")),
+                "toDate": self.config.get("end_date", datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
             }
         }
         return request_body
