@@ -1,8 +1,7 @@
 import time
-
 from typing import Any, Dict, Optional, Union, List, Iterable
 from singer_sdk import typing as th  # JSON Schema typing helpers
-
+from tap_gong import config_helper as helper
 from tap_gong.client import GongStream
 from tap_gong.streams.calls import CallsStream
 
@@ -38,10 +37,15 @@ class CallTranscriptsStream(GongStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
+        fromDateTime = helper.get_date_time_string(self.get_starting_timestamp(context), helper.date_time_format_string)
+        toDateTime = helper.get_date_time_string_from_config(self.config, helper.end_date_key,
+                                                             helper.date_time_format_string)
         request_body = {
             "cursor": next_page_token,
             "filter": {
-                "callIds": [context["call_id"]]
+                "callIds": [context["call_id"]],
+                "fromDateTime": fromDateTime,
+                "toDateTime": toDateTime
             }
         }
         time.sleep(self.request_delay_seconds)

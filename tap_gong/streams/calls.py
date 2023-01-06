@@ -1,6 +1,6 @@
 from typing import Any, Dict, Optional, Union, List, Iterable
 from singer_sdk import typing as th
-
+from tap_gong import config_helper as helper
 from tap_gong.client import GongStream
 
 
@@ -123,6 +123,7 @@ class CallsStream(GongStream):
                         th.ObjectType(
                             th.Property("name", th.StringType),
                             th.Property("count", th.IntegerType),
+                            th.Property("type", th.StringType)
                         )
                     ),
                 ),
@@ -238,13 +239,12 @@ class CallsStream(GongStream):
         self, context: Optional[dict], next_page_token: Optional[Any]
     ) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
-        start_time = self.get_starting_timestamp(context)
-        start_time_fmt = (
-            start_time.strftime("%Y-%m-%dT%H:%M:%SZ") if start_time else None
-        )
+        fromDateTime = helper.get_date_time_string(self.get_starting_timestamp(context), helper.date_time_format_string)
+        toDateTime = helper.get_date_time_string_from_config(self.config, helper.end_date_key,
+                                                             helper.date_time_format_string)
         request_body = {
             "cursor": next_page_token,
-            "filter": {"fromDateTime": start_time_fmt, "toDateTime": None},
+            "filter": {"fromDateTime": fromDateTime, "toDateTime": toDateTime},
             "contentSelector": {
                 "context": "Extended",
                 "contextTiming": ["Now"],

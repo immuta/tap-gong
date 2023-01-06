@@ -1,9 +1,9 @@
 from typing import Any, Dict, Optional, Union, List, Iterable
-from datetime import datetime
 import requests
 from singer_sdk import typing as th  # JSON Schema typing helpers
 from singer_sdk.exceptions import RetriableAPIError, FatalAPIError
 from tap_gong.client import GongStream
+from tap_gong import config_helper
 
 
 class InteractionStatsStream(GongStream):
@@ -29,11 +29,12 @@ class InteractionStatsStream(GongStream):
 
     def prepare_request_payload(self, context: Optional[dict], next_page_token: Optional[Any]) -> Optional[dict]:
         """Prepare the data payload for the REST API request."""
+        stats_filter_dates = config_helper.get_stats_dates_from_config(self.config)
         request_body = {
             "cursor": next_page_token,
             "filter": {
-                "fromDate": self.config.get("start_date", datetime.min.strftime("%Y-%m-%dT%H:%M:%SZ")),
-                "toDate": self.config.get("end_date", datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ"))
+                "fromDate": stats_filter_dates["stats_from_date"],
+                "toDate": stats_filter_dates["stats_to_date"]
             }
         }
         return request_body
