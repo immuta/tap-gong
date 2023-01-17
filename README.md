@@ -9,19 +9,18 @@ It is built with the Meltano [SDK](https://gitlab.com/meltano/sdk) for Singer Ta
 
 The Gong tap accepts the following configuration options:
 
-- `access_key`: An API access key generated in Gong.
-- `access_key_secret`: The secret for the access key.
-- `start_date`: The beginning date from which to start searching calls. Default is python min date.
-- `end_date`: The end date for searching calls. Default is current date.
+- `access_key`(required): An API access key generated in Gong.
+- `access_key_secret`(required): The secret for the access key.
+- `start_date`(required): The beginning date from which to start searching calls. Default is python min date.
+- `end_date`(required): The end date for searching calls. Default is current date.
 
 ### ** NOTE ** ###
 
-`start_date` and `end_date` are used in filter clause to make gong API calls. As of today, different API endpoints
+`start_date` and `end_date` are required and used in filter clause to make gong API calls. As of today, different API endpoints
 have different requirements for filter dates. For example,
 
 **Calls endpoints:** for calls endpoints, filter dates are optional and uses date-time format 
-(e.g., '2018-02-18T02:30:00-07:00' or '2018-02-18T08:00:00Z', where Z stands for UTC). If not provided, 
-all available call records are returned. 
+(e.g., '2018-02-18T02:30:00-07:00' or '2018-02-18T08:00:00Z', where Z stands for UTC). 
 
 **Stats endpoints:** for stats endpoints filter dates are mandatory and accepts date format (YYYY-MM-DD). 
 `start_date` must be less than `end_date` and `end_date` cannot be greater than current date for stats endpoints.

@@ -1,6 +1,5 @@
 from dateutil import parser
 from dateutil.relativedelta import *
-from datetime import datetime
 
 
 date_time_format_string = "%Y-%m-%dT%H:%M:%SZ"
@@ -50,21 +49,13 @@ def get_stats_dates_from_config(config):
     3. toDate is exclusive and cannot be greater than current date
 
     Dates are retrieved to satisfy the above criteria.
-    1. If no date provided for start_date in config, then python min date is used for fromDate
-    2. If no date provided for end_date in config, then current date is used for toDate
-    3. If same date provided for both start_date and end_date in config, fromDate will be decreased to one day
-    4. If end_date provided in config is greater than current date then current date will be used for toDate
+    1. If start_date provided in config is greater than or equal to the end_date then fromDate will be decreased by one day
     """
     start_date = get_date_time_value_from_config(config, start_date_key)
     end_date = get_date_time_value_from_config(config, end_date_key)
-    current_date = datetime.now().date()
-    stats_from_date = start_date.date() if start_date else datetime.min.date()
-    stats_to_date = end_date.date() if end_date else current_date
-    if stats_to_date > current_date:
-        stats_to_date = current_date
-    if stats_from_date >= stats_to_date:
-        stats_from_date = stats_from_date + relativedelta(days=-1)
+    if start_date.date() >= end_date.date():
+        start_date = start_date + relativedelta(days=-1)
     return {
-        "stats_from_date": stats_from_date.strftime(date_format_string),
-        "stats_to_date": stats_to_date.strftime(date_format_string)
+        "stats_from_date": start_date.strftime(date_format_string),
+        "stats_to_date": end_date.strftime(date_format_string)
     }
