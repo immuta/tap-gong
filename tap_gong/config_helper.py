@@ -33,15 +33,17 @@ def date_value_to_iso_string(time):
 
 def extended_config_validation(config):
     """Date validation (match with gong API documentation):
-        Both start_date(date and time) and end_date(date time) are optional and start_date can be equal or less than
-        end_date.We are validating if date can be parsed from the provided config parameters.
+        Both start_date(date and time) and end_date(date time) are required, check that they are valid.
     """
     try:
         start_date = get_date_time_value_from_config(config, start_date_key)
         end_date = get_date_time_value_from_config(config, end_date_key)
-        if start_date and end_date and start_date > end_date:
+        if not start_date:
             raise BaseException(
-                'Invalid date range in configuration. Please provide correct date range.')
+                'Missing valid start date in configuration. Please provide correct start date.')
+        if not end_date:
+            raise BaseException(
+                'Missing valid end date in configuration. Please provide correct end date.')
     except Exception as e:
         raise BaseException(
             f'Configuration error: Invalid date found in configuration file: \n"{e}"')
