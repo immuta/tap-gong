@@ -1,9 +1,9 @@
 from dateutil import parser
 from dateutil.relativedelta import *
+from datetime import datetime, timezone
 
 
 date_time_format_string = "%Y-%m-%dT%H:%M:%SZ"
-date_format_string = "%Y-%m-%d"
 start_date_key = "start_date"
 end_date_key = "end_date"
 
@@ -21,20 +21,29 @@ def get_date_time_string_from_config(config, key, format_string):
 def get_date_time_value_from_config(config, key):
     conf_date_time = config.get(key, '').strip()
     if conf_date_time:
-        return parser.parse(parser.parse(conf_date_time).strftime(date_time_format_string))
+        return parser.parse(conf_date_time)
     return None
+
+
+def date_value_to_iso_string(time):
+    # python datetime.isoformat() end with +00:00, but need Z
+    # i.e. we need 2023-01-19T01:23:45Z instead of 2023-01-19T01:23:45+00:00
+    return f'{time.isoformat()[:-6]}Z'
 
 
 def extended_config_validation(config):
     """Date validation (match with gong API documentation):
-        Both start_date(date and time) and end_date(date time) are optional and start_date can be equal or less than
-        end_date.We are validating if date can be parsed from the provided config parameters.
+        Both start_date(date and time) and end_date(date time) are required, check that they are valid.
     """
     try:
         start_date = get_date_time_value_from_config(config, start_date_key)
         end_date = get_date_time_value_from_config(config, end_date_key)
-        if start_date and end_date and start_date > end_date:
-            raise BaseException('Invalid date range in configuration. Please provide correct date range.')
+        if not start_date:
+            raise BaseException(
+                'Missing valid start date in configuration. Please provide correct start date.')
+        if not end_date:
+            raise BaseException(
+                'Missing valid end date in configuration. Please provide correct end date.')
     except Exception as e:
         raise BaseException(
             f'Configuration error: Invalid date found in configuration file: \n"{e}"')
@@ -53,9 +62,12 @@ def get_stats_dates_from_config(config):
     """
     start_date = get_date_time_value_from_config(config, start_date_key)
     end_date = get_date_time_value_from_config(config, end_date_key)
-    if start_date.date() >= end_date.date():
-        start_date = start_date + relativedelta(days=-1)
+    now = datetime.now(timezone.utc)
+    if end_date > now:
+        end_date = now
+    if start_date >= end_date - relativedelta(days=1):
+        start_date = end_date - relativedelta(days=1)
     return {
-        "stats_from_date": start_date.strftime(date_format_string),
-        "stats_to_date": end_date.strftime(date_format_string)
+        "stats_from_date": date_value_to_iso_string(start_date),
+        "stats_to_date": date_value_to_iso_string(end_date)
     }
