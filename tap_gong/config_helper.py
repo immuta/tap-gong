@@ -49,7 +49,7 @@ def extended_config_validation(config):
             f'Configuration error: Invalid date found in configuration file: \n"{e}"')
 
 
-def get_stats_dates_from_config(config):
+def get_stats_dates_from_config(config, retry=False):
     """
     Stats filter date:
     As per gong API documentation, stats date filter has the following requirements:
@@ -59,10 +59,12 @@ def get_stats_dates_from_config(config):
 
     Dates are retrieved to satisfy the above criteria.
     1. If start_date provided in config is greater than or equal to the end_date then fromDate will be decreased by one day
+    2. In the case of a retry request, we subtract 1 extra day to attempt to avoid UTC date conversion issue
     """
     start_date = get_date_time_value_from_config(config, start_date_key)
     end_date = get_date_time_value_from_config(config, end_date_key)
-    now = datetime.now(timezone.utc)
+    now = datetime.now(timezone.utc) if not retry else datetime.now(
+        timezone.utc) - relativedelta(days=1)
     if end_date > now:
         end_date = now
     if start_date >= end_date - relativedelta(days=1):
