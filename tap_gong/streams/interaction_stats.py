@@ -4,6 +4,7 @@ from singer_sdk import typing as th  # JSON Schema typing helpers
 from singer_sdk.exceptions import RetriableAPIError, FatalAPIError
 from tap_gong.client import GongStream
 from tap_gong import config_helper
+from tap_gong.utils import log_error
 
 
 class InteractionStatsStream(GongStream):
@@ -86,8 +87,7 @@ class InteractionStatsStream(GongStream):
             if response.status_code == 400 and not self.retried:
                 self.retried = True
                 raise RetriableAPIError(msg, response)
-            # 404 = nothing found for user - move on
-            if response.status_code != 404:
+            else:
                 raise FatalAPIError(msg)
 
     def _request(
@@ -96,17 +96,26 @@ class InteractionStatsStream(GongStream):
         """
         Override default Singer request so we can modify payload during retry
         """
-        if self.retried and not self.modified_request:
-            prepared_request = self.prepare_request(None, None)
-            self.modified_request = True
-        response = self.requests_session.send(prepared_request, timeout=self.timeout)
-        self._write_request_duration_log(
-            endpoint=self.path,
-            response=response,
-            context=context,
-            extra_tags={"url": prepared_request.path_url}
-            if self._LOG_REQUEST_METRIC_URLS
-            else None,
-        )
-        self.validate_response(response)
-        return response
+        try:
+            self.tries += 1
+            if self.retried and not self.modified_request:
+                prepared_request = self.prepare_request(None, None)
+                self.modified_request = True
+            response = self.requests_session.send(prepared_request, timeout=self.timeout)
+            self._write_request_duration_log(
+                endpoint=self.path,
+                response=response,
+                context=context,
+                extra_tags={"url": prepared_request.path_url}
+                if self._LOG_REQUEST_METRIC_URLS
+                else None,
+            )
+            self.validate_response(response)
+            return response
+        except RetriableAPIError as e:
+            if self.tries == self.backoff_max_tries():
+                log_error(e, self.config, self.logger, 'gong.GongApiError')
+            raise
+        except FatalAPIError as e:
+            log_error(e, self.config, self.logger, 'gong.GongApiError')
+            raise
